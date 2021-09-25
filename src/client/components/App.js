@@ -2,6 +2,7 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useMemo,
 } from 'react';
 import {
   includes,
@@ -53,11 +54,13 @@ const App = () => {
     [],
   );
 
-  const onFilterInputChange = (e) => {
-    setFilterBy(e.target.value);
+  const onFilterInputChange = () => (value) => {
+    setFilterBy(value);
   };
 
-  const debouncedOnFilterInputChange = debounce(onFilterInputChange, 300);
+  const debouncedOnFilterInputChange = useMemo(
+    (value) => debounce(onFilterInputChange(value), 300)
+  , []);
 
   const sortList = (list) => {
     switch (sortBy) {
@@ -93,7 +96,7 @@ const App = () => {
               <input
                 id="filter-by-text-input"
                 type="text"
-                onChange={debouncedOnFilterInputChange}
+                onChange={e => debouncedOnFilterInputChange(e.target.value)}
               />
             </div>
             <div className="filter">
