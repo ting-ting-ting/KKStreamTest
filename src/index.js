@@ -1,7 +1,9 @@
 import express from 'express';
 import React from 'react';
+import { Provider } from 'react-redux'
 import { renderToString } from 'react-dom/server';
 import App from './client/components/App';
+import store from './reducers/store'
 
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -13,7 +15,11 @@ app.use('/', (req, res) => {
     encoding: 'utf8',
   } );
 
-  const appHTML = renderToString(<App />);
+  const appHTML = renderToString(
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
 
   indexHTML = indexHTML.replace('<div id="root"></div>', `<div id="root">${appHTML}</div>`);
 

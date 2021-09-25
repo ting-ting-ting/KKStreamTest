@@ -10,6 +10,7 @@ import {
   orderBy,
   debounce,
 } from 'lodash';
+import { useSelector, useDispatch } from 'react-redux'
 import { reducer, initialState } from './reducer/reducer';
 import {
   fetchUsers,
@@ -33,6 +34,9 @@ const App = () => {
   const doFetchUsers = users => fetchUsers(users, dispatch);
   const doAddUser = user => addUser(user, dispatch);
   const doDeleteUser = userId => deleteUser(userId, dispatch);
+  const count = useSelector((state) => state.users.value)
+
+  console.log('count', count)
 
   useEffect(() => {
     setLoading(true);

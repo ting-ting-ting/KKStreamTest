@@ -10,6 +10,7 @@
     "dev:build:client": "webpack --mode development --config webpack.client.js --watch"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.6.1",
     "classnames": "^2.3.1",
     "express": "^4.17.1",
     "lodash": "^4.17.21",
@@ -17,7 +18,8 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-hook-form": "^7.16.0"
+    "react-hook-form": "^7.16.0",
+    "react-redux": "^7.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
