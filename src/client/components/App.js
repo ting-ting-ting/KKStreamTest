@@ -26,19 +26,22 @@ const App = () => {
   const [filterBy, setFilterBy] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [modalShown, setModalShown] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [res, doGetUsers] = useApi(getUsers);
   const dispatch = useDispatch();
   const list = useSelector((state) => state.users.list);
   const data = useSelector((state) => state.users.data);
 
-  console.log('res', res)
+  useEffect(() => {
+    if (isEmpty(data)) {
+      doGetUsers();
+    }
+  }, []);
 
   useEffect(() => {
-    // if (isEmpty(data)) {
-      doGetUsers();
-    // }
-  }, []);
+    if (!res.loading && !isEmpty(res.data)) {
+      dispatch(fetchUsers(res.data));
+    }
+  }, [res.loading, res.data]);
 
   const onHide = useCallback(
     () => {
@@ -104,7 +107,7 @@ const App = () => {
           </div>
           <button type="button" className="add-user-btn" onClick={() => setModalShown(true)}>Add user</button>
         </div>
-        {loading ? (
+        {res.loading ? (
           <h2 className="loading">Loading...</h2>
         ) : (
           <Table userList={userList} />

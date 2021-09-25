@@ -18,7 +18,7 @@ export function useApi(
       api({
         ...params,
       }).then((d) => {
-        setData(d);
+        setData(d.data);
         setLoading(false);
       }).catch((e) => {
         console.error(e);
