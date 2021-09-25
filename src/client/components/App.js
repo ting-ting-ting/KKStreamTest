@@ -2,7 +2,6 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  useReducer,
 } from 'react';
 import {
   includes,
@@ -10,13 +9,8 @@ import {
   orderBy,
   debounce,
 } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux'
-import { reducer, initialState } from './reducer/reducer';
-import {
-  fetchUsers,
-  addUser,
-  deleteUser,
-} from './reducer/actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUsers, addUser, deleteUser } from '../../reducers/users';
 import Table from './Table';
 import AddUserModal from './AddUserModal';
 import './app.scss';
@@ -30,10 +24,10 @@ const App = () => {
   const [sortBy, setSortBy] = useState('');
   const [modalShown, setModalShown] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const doFetchUsers = users => fetchUsers(users, dispatch);
-  const doAddUser = user => addUser(user, dispatch);
-  const doDeleteUser = userId => deleteUser(userId, dispatch);
+  const dispatch = useDispatch()
+  const doFetchUsers = users => dispatch(fetchUsers(users));
+  const doAddUser = user => dispatch(addUser(user));
+  const doDeleteUser = userId => dispatch(deleteUser(userId));
   const list = useSelector((state) => state.users.list)
   const data = useSelector((state) => state.users.data)
 
@@ -84,7 +78,7 @@ const App = () => {
     };
   };
 
-  const userList = sortList(state.list.map(userId => state.data[userId]).filter(user => {
+  const userList = sortList(list.map(userId => data[userId]).filter(user => {
     if (!isEmpty(filterBy)) {
       return includes(user.name.toLowerCase(), filterBy.toLowerCase());
     }

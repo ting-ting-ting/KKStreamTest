@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+import { omit, max } from 'lodash';
 
 export const usersSlice = createSlice({
   name: 'users',
@@ -7,7 +8,7 @@ export const usersSlice = createSlice({
     data: null,
   },
   reducers: {
-    fetechUsers: (state, action) => {
+    fetchUsers: (state, action) => {
       const list = action.payload.map(user => user.id);
       const data = action.payload.reduce((prev, curr) => ({
         ...prev,
@@ -56,6 +57,6 @@ export const usersSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { fetechUsers, addUser, deleteUser } = usersSlice.actions
+export const { fetchUsers, addUser, deleteUser } = usersSlice.actions
 
 export default usersSlice.reducer
