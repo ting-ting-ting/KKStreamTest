@@ -34,9 +34,11 @@ const App = () => {
   const doFetchUsers = users => fetchUsers(users, dispatch);
   const doAddUser = user => addUser(user, dispatch);
   const doDeleteUser = userId => deleteUser(userId, dispatch);
-  const count = useSelector((state) => state.users.value)
+  const list = useSelector((state) => state.users.list)
+  const data = useSelector((state) => state.users.data)
 
-  console.log('count', count)
+  console.log('list', list)
+  console.log('data', data)
 
   useEffect(() => {
     setLoading(true);
