@@ -13,14 +13,12 @@ app.use('/', (req, res) => {
     encoding: 'utf8',
   } );
 
-  let appHTML = renderToString(<App />);
-
-  console.log('indexHTML', indexHTML)
+  const appHTML = renderToString(<App />);
 
   indexHTML = indexHTML.replace('<div id="root"></div>', `<div id="root">${appHTML}</div>`);
 
   res.contentType('text/html');
-  res.status( 200 );
+  res.status(200);
 
   return res.send( indexHTML );
 });
