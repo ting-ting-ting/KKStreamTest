@@ -54,9 +54,7 @@ const App = () => {
     setFilterBy(value);
   };
 
-  const debouncedOnFilterInputChange = useMemo(
-    (value) => debounce(onFilterInputChange(value), 300)
-  , []);
+  const debouncedOnFilterInputChange = useMemo((value) => debounce(onFilterInputChange(value), 300), []);
 
   const sortList = (list) => {
     switch (sortBy) {

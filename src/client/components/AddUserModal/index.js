@@ -15,6 +15,7 @@ const AddUserModal = ({
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const dispatch = useDispatch();
 
   const onSubmit = data => {

@@ -34,7 +34,7 @@ export const usersSlice = createSlice({
           ...state.data,
           [newUserId]: {
             id: newUserId,
-            ...action.payload
+            ...action.payload,
           },
         },
       };
@@ -43,20 +43,19 @@ export const usersSlice = createSlice({
       const targetIndex = state.list.findIndex((l) => l === action.payload);
       const newList = [
         ...state.list.slice(0, targetIndex),
-        ...state.list.slice(targetIndex + 1)
+        ...state.list.slice(targetIndex + 1),
       ];
       const newData = omit(state.data, action.payload);
 
       return {
         ...state,
         list: newList,
-        data: newData
+        data: newData,
       };
     },
   },
-})
+});
 
-// Action creators are generated for each case reducer function
-export const { fetchUsers, addUser, deleteUser } = usersSlice.actions
+export const { fetchUsers, addUser, deleteUser } = usersSlice.actions;
 
-export default usersSlice.reducer
+export default usersSlice.reducer;

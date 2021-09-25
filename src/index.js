@@ -1,20 +1,20 @@
-import express from 'express';
 import React from 'react';
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import App from './client/components/App';
 import createStore from './reducers/store';
 import { getUsers } from './api/users';
 
-const fs = require( 'fs' );
-const path = require( 'path' );
 const app = express();
 
 app.use(express.static('public'));
 app.use('/', (req, res) => {
-  let indexHTML = fs.readFileSync( path.resolve( __dirname, './index.html' ), {
+  let indexHTML = fs.readFileSync(path.resolve( __dirname, './index.html'), {
     encoding: 'utf8',
-  } );
+  });
 
   getUsers()
     .then(apirRes => {
@@ -57,7 +57,7 @@ app.use('/', (req, res) => {
 
       res.send(indexHTML);
     })
-    .catch(e => {
+    .catch((e) => {
       console.error(e);
 
       const store = createStore();
