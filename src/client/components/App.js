@@ -15,6 +15,7 @@ import { fetchUsers } from '../../reducers/users';
 import Table from './Table';
 import AddUserModal from './AddUserModal';
 import { getUsers } from '../../api/users';
+import { useApi } from '../../utils/api';
 import './app.scss';
 
 const ASC_ORDER_ID_OPTION = 'ASC_ORDER_ID_OPTION';
@@ -26,24 +27,17 @@ const App = () => {
   const [sortBy, setSortBy] = useState('');
   const [modalShown, setModalShown] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [res, doGetUsers] = useApi(getUsers);
   const dispatch = useDispatch();
   const list = useSelector((state) => state.users.list);
   const data = useSelector((state) => state.users.data);
 
-  useEffect(() => {
-    if (isEmpty(data)) {
-      setLoading(true);
+  console.log('res', res)
 
-      getUsers()
-        .then(res => {
-          dispatch(fetchUsers(res.data));
-          setLoading(false);
-        })
-        .catch(e => {
-          console.error(e);
-          setLoading(false);
-        })
-    }
+  useEffect(() => {
+    // if (isEmpty(data)) {
+      doGetUsers();
+    // }
   }, []);
 
   const onHide = useCallback(
