@@ -3,7 +3,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import App from './client/components/App';
-import createStote from './reducers/store';
+import createStore from './reducers/store';
 
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -15,7 +15,30 @@ app.use('/', (req, res) => {
     encoding: 'utf8',
   } );
 
-  const store = createStote();
+  const preloadedState = {
+    users: {
+      list: [1, 2, 3],
+      data: {
+        1: {
+          id: 1,
+          name: 'Ting',
+          email: 'ting@gmail.com',
+        },
+        2: {
+          id: 2,
+          name: 'Henry',
+          email: 'henry@gmail.com',
+        },
+        3: {
+          id: 3,
+          name: 'Kevin',
+          email: 'kevin@gmail.com',
+        },
+      },
+    },
+  };
+
+  const store = createStore(preloadedState);
 
   const appHTML = renderToString(
     <Provider store={store}>
@@ -23,7 +46,17 @@ app.use('/', (req, res) => {
     </Provider>
   );
 
-  indexHTML = indexHTML.replace('<div id="root"></div>', `<div id="root">${appHTML}</div>`);
+  const finalState = store.getState()
+
+  indexHTML = indexHTML.replace('<div id="root"></div>', `
+    <div id="root">${appHTML}</div>
+    <script>
+      window.__PRELOADED_STATE__ = ${JSON.stringify(finalState).replace(
+        /</g,
+        '\\u003c'
+      )}
+    </script>
+  `);
 
   res.contentType('text/html');
   res.status(200);
