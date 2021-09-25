@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import App from './client/components/App';
 import createStore from './reducers/store';
+import { getUsers } from './api/users';
 
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -15,53 +16,47 @@ app.use('/', (req, res) => {
     encoding: 'utf8',
   } );
 
-  const preloadedState = {
-    users: {
-      list: [1, 2, 3],
-      data: {
-        1: {
-          id: 1,
-          name: 'Ting',
-          email: 'ting@gmail.com',
+  getUsers()
+    .then(apires => {
+      const users = apires.data;
+      const list = users.map(user => user.id);
+      const data = users.reduce((prev, curr) => ({
+        ...prev,
+        [curr.id]: curr,
+      }), {});
+
+      const preloadedState = {
+        users: {
+          list,
+          data,
         },
-        2: {
-          id: 2,
-          name: 'Henry',
-          email: 'henry@gmail.com',
-        },
-        3: {
-          id: 3,
-          name: 'Kevin',
-          email: 'kevin@gmail.com',
-        },
-      },
-    },
-  };
+      };
 
-  const store = createStore(preloadedState);
+      const store = createStore(preloadedState);
 
-  const appHTML = renderToString(
-    <Provider store={store}>
-      <App />
-    </Provider>
-  );
+      const appHTML = renderToString(
+        <Provider store={store}>
+          <App />
+        </Provider>
+      );
 
-  const finalState = store.getState()
+      const finalState = store.getState()
 
-  indexHTML = indexHTML.replace('<div id="root"></div>', `
-    <div id="root">${appHTML}</div>
-    <script>
-      window.__PRELOADED_STATE__ = ${JSON.stringify(finalState).replace(
-        /</g,
-        '\\u003c'
-      )}
-    </script>
-  `);
+      indexHTML = indexHTML.replace('<div id="root"></div>', `
+        <div id="root">${appHTML}</div>
+        <script>
+          window.__PRELOADED_STATE__ = ${JSON.stringify(finalState).replace(
+            /</g,
+            '\\u003c'
+          )}
+        </script>
+      `);
 
-  res.contentType('text/html');
-  res.status(200);
+      res.contentType('text/html');
+      res.status(200);
 
-  return res.send( indexHTML );
+      res.send( indexHTML );
+    });
 });
 
 app.listen(8300, () => {
