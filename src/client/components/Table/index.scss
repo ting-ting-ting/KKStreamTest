@@ -1,0 +1,81 @@
+.table-index {
+  margin-top: 25px;
+
+  .table {
+    width: 100%;
+    border: 1px solid #000;
+
+    .table-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: 1px solid #000;
+
+      .cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        align-self: stretch;
+        margin: 0;
+        padding: 10px;
+        border-right: 1px solid #000;
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &.short-cell {
+          flex: 1;
+        }
+        &.long-cell {
+          flex: 4;
+        }
+      }
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      @media (max-width: 767px) {
+        display: none;
+      }
+
+      .table-row {
+        flex: 1;
+      }
+    }
+
+    .table-content {
+      .table-row {
+        &:last-child {
+          border-bottom: none;
+        }
+
+        @media (max-width: 767px) {
+          flex-direction: column;
+        }
+
+        .cell {
+          @media (max-width: 767px) {
+            border-right: none;
+          }
+        }
+      }
+
+      .delete-btn {
+        border: none;
+        padding: 5px;
+
+        &:hover {
+          color: #F55759;
+        }
+
+        @media (max-width: 767px) {
+          color: #F55759;
+        }
+      }
+    }
+  }
+}
