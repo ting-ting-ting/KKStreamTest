@@ -34,17 +34,19 @@ const App = () => {
   const data = useSelector((state) => state.users.data)
 
   useEffect(() => {
-    setLoading(true);
+    if (isEmpty(data)) {
+      setLoading(true);
 
-    getUsers()
-      .then(res => {
-        doFetchUsers(res.data);
-        setLoading(false);
-      })
-      .catch(e => {
-        console.error(e);
-        setLoading(false);
-      })
+      getUsers()
+        .then(res => {
+          doFetchUsers(res.data);
+          setLoading(false);
+        })
+        .catch(e => {
+          console.error(e);
+          setLoading(false);
+        })
+    }
   }, []);
 
   const onHide = useCallback(

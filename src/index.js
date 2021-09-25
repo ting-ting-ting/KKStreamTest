@@ -17,8 +17,8 @@ app.use('/', (req, res) => {
   } );
 
   getUsers()
-    .then(apires => {
-      const users = apires.data;
+    .then(apirRes => {
+      const users = apirRes.data;
       const list = users.map(user => user.id);
       const data = users.reduce((prev, curr) => ({
         ...prev,
