@@ -1,29 +1,28 @@
-import express from "express";
-import React from "react";
-import { renderToString } from "react-dom/server";
-import App from "./client/components/App";
+import express from 'express';
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import App from './client/components/App';
 
+const fs = require( 'fs' );
+const path = require( 'path' );
 const app = express();
 
-app.use(express.static("public"));
-app.get("/", (req, res) => {
-  const content = renderToString(<App />);
+app.use(express.static('public'));
+app.use('/', (req, res) => {
+  let indexHTML = fs.readFileSync( path.resolve( __dirname, './index.html' ), {
+    encoding: 'utf8',
+  } );
 
-  const html = `
-    <html>
-      <head>
-        <link rel="stylesheet" href="main.css" />
-      </head>
-      <body>
-        <div id="root">${content}</div>
-        <script src="bundle.js"></script>
-      </body>
-    </html>
-  `;
+  const appHTML = renderToString(<App />);
 
-  res.send(html);
+  indexHTML = indexHTML.replace('<div id="root"></div>', `<div id="root">${appHTML}</div>`);
+
+  res.contentType('text/html');
+  res.status(200);
+
+  return res.send( indexHTML );
 });
 
 app.listen(8300, () => {
-  console.log("listening on port 8300");
+  console.log('listening on port 8300');
 });
