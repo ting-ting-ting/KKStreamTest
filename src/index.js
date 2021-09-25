@@ -55,8 +55,25 @@ app.use('/', (req, res) => {
       res.contentType('text/html');
       res.status(200);
 
-      res.send( indexHTML );
-    });
+      res.send(indexHTML);
+    })
+    .catch(e => {
+      console.error(e);
+
+      const store = createStore();
+
+      const appHTML = renderToString(
+        <Provider store={store}>
+          <App />
+        </Provider>
+      );
+
+      indexHTML = indexHTML.replace('<div id="root"></div>', `
+        <div id="root">${appHTML}</div>
+      `);
+
+      res.send(indexHTML);
+    })
 });
 
 app.listen(8300, () => {
