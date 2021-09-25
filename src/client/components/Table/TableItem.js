@@ -1,13 +1,16 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { deleteUser} from '../../../reducers/users';
 
 const TableItem = ({
   data,
-  doDeleteUser,
 }) => {
+  const dispatch = useDispatch();
+
   const onDelete = useCallback(
     () => {
-      doDeleteUser(data.id);
+      dispatch(deleteUser(data.id))
     },
     [data.id],
   );
@@ -30,7 +33,6 @@ TableItem.propTypes = {
     name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
   }),
-  doDeleteUser: PropTypes.func.isRequired,
 };
 
 export default React.memo(TableItem);

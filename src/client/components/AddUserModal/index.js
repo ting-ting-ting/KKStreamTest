@@ -3,25 +3,27 @@ import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { has } from 'lodash';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { addUser} from '../../../reducers/users';
 import './index.scss';
 
 const AddUserModal = ({
   onHide,
-  doAddUser,
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const dispatch = useDispatch();
 
   const onSubmit = data => {
     const { name, email } = data;
 
-    doAddUser({
+    dispatch(addUser({
       name,
       email,
-    });
+    }))
     onHide();
   };
 
@@ -66,7 +68,6 @@ const AddUserModal = ({
 
 AddUserModal.propTypes = {
   onHide: PropTypes.func.isRequired,
-  doAddUser: PropTypes.func.isRequired,
 };
 
 export default React.memo(AddUserModal);

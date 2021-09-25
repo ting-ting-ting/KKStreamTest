@@ -11,7 +11,7 @@ import {
   debounce,
 } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUsers, addUser, deleteUser } from '../../reducers/users';
+import { fetchUsers } from '../../reducers/users';
 import Table from './Table';
 import AddUserModal from './AddUserModal';
 import { getUsers } from '../../api/users';
@@ -26,12 +26,9 @@ const App = () => {
   const [sortBy, setSortBy] = useState('');
   const [modalShown, setModalShown] = useState(false);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch()
-  const doFetchUsers = users => dispatch(fetchUsers(users));
-  const doAddUser = user => dispatch(addUser(user));
-  const doDeleteUser = userId => dispatch(deleteUser(userId));
-  const list = useSelector((state) => state.users.list)
-  const data = useSelector((state) => state.users.data)
+  const dispatch = useDispatch();
+  const list = useSelector((state) => state.users.list);
+  const data = useSelector((state) => state.users.data);
 
   useEffect(() => {
     if (isEmpty(data)) {
@@ -39,7 +36,7 @@ const App = () => {
 
       getUsers()
         .then(res => {
-          doFetchUsers(res.data);
+          dispatch(fetchUsers(res.data));
           setLoading(false);
         })
         .catch(e => {
@@ -116,17 +113,11 @@ const App = () => {
         {loading ? (
           <h2 className="loading">Loading...</h2>
         ) : (
-          <Table
-            userList={userList}
-            doDeleteUser={doDeleteUser}
-          />
+          <Table userList={userList} />
         )}
       </div>
       {modalShown && (
-        <AddUserModal
-          onHide={onHide}
-          doAddUser={doAddUser}
-        />
+        <AddUserModal onHide={onHide} />
       )}
     </>
   );
