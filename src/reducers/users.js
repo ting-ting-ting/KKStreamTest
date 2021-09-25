@@ -1,18 +1,14 @@
+import { createSlice } from '@reduxjs/toolkit';
 import { omit, max } from 'lodash';
-import {
-  FETCH_USERS,
-  ADD_USER,
-  DELETE_USER,
-} from './actions';
 
-const initialState = {
-  list: [],
-  data: null,
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case FETCH_USERS: {
+export const usersSlice = createSlice({
+  name: 'users',
+  initialState: {
+    list: [],
+    data: null,
+  },
+  reducers: {
+    fetchUsers: (state, action) => {
       const list = action.payload.map(user => user.id);
       const data = action.payload.reduce((prev, curr) => ({
         ...prev,
@@ -24,8 +20,8 @@ function reducer(state, action) {
         list,
         data,
       };
-    }
-    case ADD_USER: {
+    },
+    addUser: (state, action) => {
       const newUserId = max(state.list) + 1;
 
       return {
@@ -42,8 +38,8 @@ function reducer(state, action) {
           },
         },
       };
-    }
-    case DELETE_USER: {
+    },
+    deleteUser: (state, action) => {
       const targetIndex = state.list.findIndex((l) => l === action.payload);
       const newList = [
         ...state.list.slice(0, targetIndex),
@@ -56,11 +52,11 @@ function reducer(state, action) {
         list: newList,
         data: newData
       };
-    }
+    },
+  },
+})
 
-    default:
-      return state;
-  }
-}
+// Action creators are generated for each case reducer function
+export const { fetchUsers, addUser, deleteUser } = usersSlice.actions
 
-export { reducer, initialState };
+export default usersSlice.reducer

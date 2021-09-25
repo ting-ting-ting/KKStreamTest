@@ -1,7 +1,10 @@
 import express from 'express';
 import React from 'react';
+import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import App from './client/components/App';
+import createStore from './reducers/store';
+import { getUsers } from './api/users';
 
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -13,14 +16,64 @@ app.use('/', (req, res) => {
     encoding: 'utf8',
   } );
 
-  const appHTML = renderToString(<App />);
+  getUsers()
+    .then(apirRes => {
+      const users = apirRes.data;
+      const list = users.map(user => user.id);
+      const data = users.reduce((prev, curr) => ({
+        ...prev,
+        [curr.id]: curr,
+      }), {});
 
-  indexHTML = indexHTML.replace('<div id="root"></div>', `<div id="root">${appHTML}</div>`);
+      const preloadedState = {
+        users: {
+          list,
+          data,
+        },
+      };
 
-  res.contentType('text/html');
-  res.status(200);
+      const store = createStore(preloadedState);
 
-  return res.send( indexHTML );
+      const appHTML = renderToString(
+        <Provider store={store}>
+          <App />
+        </Provider>
+      );
+
+      const finalState = store.getState()
+
+      indexHTML = indexHTML.replace('<div id="root"></div>', `
+        <div id="root">${appHTML}</div>
+        <script>
+          window.__PRELOADED_STATE__ = ${JSON.stringify(finalState).replace(
+            /</g,
+            '\\u003c'
+          )}
+        </script>
+      `);
+
+      res.contentType('text/html');
+      res.status(200);
+
+      res.send(indexHTML);
+    })
+    .catch(e => {
+      console.error(e);
+
+      const store = createStore();
+
+      const appHTML = renderToString(
+        <Provider store={store}>
+          <App />
+        </Provider>
+      );
+
+      indexHTML = indexHTML.replace('<div id="root"></div>', `
+        <div id="root">${appHTML}</div>
+      `);
+
+      res.send(indexHTML);
+    })
 });
 
 app.listen(8300, () => {

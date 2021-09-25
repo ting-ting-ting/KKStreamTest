@@ -5,7 +5,6 @@ import './index.scss';
 
 const Table = ({
   userList,
-  doDeleteUser,
 }) => {
   if (userList.length === 0) return null;
 
@@ -33,7 +32,6 @@ const Table = ({
             <TableItem
               key={data.id}
               data={data}
-              doDeleteUser={doDeleteUser}
             />
           ))}
         </div>
@@ -48,7 +46,6 @@ Table.propTypes = {
     name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
   })).isRequired,
-  doDeleteUser: PropTypes.func.isRequired,
 };
 
 export default React.memo(Table);

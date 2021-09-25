@@ -2,7 +2,7 @@ import React, {
   useEffect,
   useState,
   useCallback,
-  useReducer,
+  useMemo,
 } from 'react';
 import {
   includes,
@@ -10,14 +10,11 @@ import {
   orderBy,
   debounce,
 } from 'lodash';
-import { reducer, initialState } from './reducer/reducer';
-import {
-  fetchUsers,
-  addUser,
-  deleteUser,
-} from './reducer/actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUsers } from '../../reducers/users';
 import Table from './Table';
 import AddUserModal from './AddUserModal';
+import { getUsers } from '../../api/users';
 import './app.scss';
 
 const ASC_ORDER_ID_OPTION = 'ASC_ORDER_ID_OPTION';
@@ -29,24 +26,24 @@ const App = () => {
   const [sortBy, setSortBy] = useState('');
   const [modalShown, setModalShown] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const doFetchUsers = users => fetchUsers(users, dispatch);
-  const doAddUser = user => addUser(user, dispatch);
-  const doDeleteUser = userId => deleteUser(userId, dispatch);
+  const dispatch = useDispatch();
+  const list = useSelector((state) => state.users.list);
+  const data = useSelector((state) => state.users.data);
 
   useEffect(() => {
-    setLoading(true);
+    if (isEmpty(data)) {
+      setLoading(true);
 
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(data => {
-        doFetchUsers(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        console.error(e);
-        setLoading(false);
-      })
+      getUsers()
+        .then(res => {
+          dispatch(fetchUsers(res.data));
+          setLoading(false);
+        })
+        .catch(e => {
+          console.error(e);
+          setLoading(false);
+        })
+    }
   }, []);
 
   const onHide = useCallback(
@@ -56,11 +53,13 @@ const App = () => {
     [],
   );
 
-  const onFilterInputChange = (e) => {
-    setFilterBy(e.target.value);
+  const onFilterInputChange = () => (value) => {
+    setFilterBy(value);
   };
 
-  const debouncedOnFilterInputChange = debounce(onFilterInputChange, 300);
+  const debouncedOnFilterInputChange = useMemo(
+    (value) => debounce(onFilterInputChange(value), 300)
+  , []);
 
   const sortList = (list) => {
     switch (sortBy) {
@@ -78,7 +77,7 @@ const App = () => {
     };
   };
 
-  const userList = sortList(state.list.map(userId => state.data[userId]).filter(user => {
+  const userList = sortList(list.map(userId => data[userId]).filter(user => {
     if (!isEmpty(filterBy)) {
       return includes(user.name.toLowerCase(), filterBy.toLowerCase());
     }
@@ -96,7 +95,7 @@ const App = () => {
               <input
                 id="filter-by-text-input"
                 type="text"
-                onChange={debouncedOnFilterInputChange}
+                onChange={e => debouncedOnFilterInputChange(e.target.value)}
               />
             </div>
             <div className="filter">
@@ -114,17 +113,11 @@ const App = () => {
         {loading ? (
           <h2 className="loading">Loading...</h2>
         ) : (
-          <Table
-            userList={userList}
-            doDeleteUser={doDeleteUser}
-          />
+          <Table userList={userList} />
         )}
       </div>
       {modalShown && (
-        <AddUserModal
-          onHide={onHide}
-          doAddUser={doAddUser}
-        />
+        <AddUserModal onHide={onHide} />
       )}
     </>
   );
