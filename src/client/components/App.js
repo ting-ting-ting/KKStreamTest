@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchUsers, addUser, deleteUser } from '../../reducers/users';
 import Table from './Table';
 import AddUserModal from './AddUserModal';
+import { getUsers } from '../../api/users';
 import './app.scss';
 
 const ASC_ORDER_ID_OPTION = 'ASC_ORDER_ID_OPTION';
@@ -35,10 +36,9 @@ const App = () => {
   useEffect(() => {
     setLoading(true);
 
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(data => {
-        doFetchUsers(data);
+    getUsers()
+      .then(res => {
+        doFetchUsers(res.data);
         setLoading(false);
       })
       .catch(e => {
