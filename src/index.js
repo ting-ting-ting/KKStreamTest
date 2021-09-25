@@ -3,7 +3,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 import App from './client/components/App';
-import store from './reducers/store';
+import createStote from './reducers/store';
 
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -14,6 +14,8 @@ app.use('/', (req, res) => {
   let indexHTML = fs.readFileSync( path.resolve( __dirname, './index.html' ), {
     encoding: 'utf8',
   } );
+
+  const store = createStote();
 
   const appHTML = renderToString(
     <Provider store={store}>
