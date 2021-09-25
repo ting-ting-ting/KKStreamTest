@@ -31,9 +31,6 @@ const App = () => {
   const list = useSelector((state) => state.users.list)
   const data = useSelector((state) => state.users.data)
 
-  console.log('list', list)
-  console.log('data', data)
-
   useEffect(() => {
     setLoading(true);
 
